@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thử thách yêu nước</title>
+<style>
+:root{--bg:#fff8e1;--card:#fff;--tx:#3b1a1a;--red:#da251d;--gold:#ffcd00;--ok:#1b8a3a;--bad:#c62828;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a0d0d;--card:#3a1515;--tx:#fff3d6}}
+:root[data-theme="dark"]{--bg:#2a0d0d;--card:#3a1515;--tx:#fff3d6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;align-items:center;justify-content:center;padding:16px;user-select:none;-webkit-user-select:none}
+.card{background:var(--card);width:100%;max-width:560px;border-radius:16px;padding:24px;border-top:8px solid var(--red);box-shadow:0 6px 24px rgba(0,0,0,.2)}
+h1{font-size:1.2rem;margin:0 0 6px;color:var(--red)}
+.meta{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:14px}
+.bar{height:8px;background:rgba(0,0,0,.12);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s}
+.q{font-size:1.1rem;font-weight:600;margin-bottom:14px;line-height:1.4}
+button.opt{display:block;width:100%;text-align:left;padding:13px 14px;margin:8px 0;border:2px solid var(--red);background:transparent;color:var(--tx);border-radius:10px;font-size:1rem;cursor:pointer}
+button.opt:hover{background:var(--gold);color:#3b1a1a}
+button.opt.bad{background:var(--bad);color:#fff;border-color:var(--bad)}
+.msg{min-height:1.4em;margin-top:10px;color:var(--bad);font-weight:600}
+.code{display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.08);padding:12px;border-radius:10px;margin-top:14px;flex-wrap:wrap}
+.code b{flex:1;word-break:break-all;user-select:text;-webkit-user-select:text}
+.copy{padding:9px 16px;border:0;border-radius:8px;background:var(--red);color:#fff;font-weight:700;cursor:pointer}
+.lock{text-align:center}
+.lock .big{font-size:3rem}
+</style>
+</head>
+<body>
+<div class="card" id="app"></div>
+<script>
+(function(){
+var Q=[
+{t:"Bạn có yêu Việt Nam không?",o:["Có","Không"],a:0,type:"ban"},
+{t:"Hoàng Sa và Trường Sa là của Việt Nam đúng không?",o:["Đúng","Không"],a:0,type:"kick"},
+{t:"Tác phẩm nổi tiếng nào của Chủ tịch Hồ Chí Minh khẳng định \"Dân ta có một lòng nồng nàn yêu nước. Đó là một truyền thống quý báu của ta\"?",o:["A. Tuyên ngôn Độc lập","B. Tinh thần yêu nước của nhân dân ta","C. Đường Kách mệnh"],a:1,type:"quiz"},
+{t:"Nguyễn Tất Thành (Bác Hồ) ra đi tìm đường cứu nước vào năm nào và tại bến cảng nào?",o:["A. Năm 1911, tại bến cảng Nhà Rồng","B. Năm 1920, tại cảng Mác-xây (Pháp)","C. Năm 1930, tại Quảng Châu (Trung Quốc)"],a:0,type:"quiz"},
+{t:"Đội Việt Nam Tuyên truyền Giải phóng quân (tiền thân của Quân đội nhân dân Việt Nam) được thành lập vào ngày tháng năm nào?",o:["A. 03/02/1930","B. 22/12/1944","C. 19/08/1945"],a:1,type:"quiz"}
+];
+var MAXWRONG=1, wrong=0, cur=0, app=document.getElementById("app"), KEY="ban_vn_quiz";
+function banned(){try{return localStorage.getItem(KEY)==="1"}catch(e){return false}}
+function setBan(){try{localStorage.setItem(KEY,"1")}catch(e){}}
+function lock(title,text,retry){
+  app.innerHTML='<div class="lock"><div class="big">🚫</div><h1>'+title+'</h1><p>'+text+'</p>'+(retry?'<button class="copy" id="rt">Làm lại</button>':'')+'</div>';
+  if(retry)document.getElementById("rt").onclick=function(){wrong=0;cur=0;show()};
+}
+function show(){
+  if(banned()){lock("Không thể truy cập","Trang web này không dành cho bạn.");return}
+  var q=Q[cur];
+  var h='<h1>🇻🇳 Thử thách yêu nước</h1><div class="meta"><span>Câu '+(cur+1)+'/5</span><span>'+(cur>=2?'Sai: '+wrong+'/'+MAXWRONG:'')+'</span></div><div class="bar"><i style="width:'+(cur/5*100)+'%"></i></div><div class="q">'+q.t+'</div>';
+  q.o.forEach(function(x,i){h+='<button class="opt" data-i="'+i+'">'+x+'</button>'});
+  h+='<div class="msg" id="msg"></div>';
+  app.innerHTML=h;
+  app.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){pick(+b.dataset.i,b)}});
+}
+function pick(i,b){
+  var q=Q[cur];
+  if(i===q.a){cur++;cur>=Q.length?win():show();return}
+  if(q.type==="ban"){setBan();lock("Không thể truy cập","Bạn không yêu Việt Nam nên không thể sử dụng trang web này.");return}
+  if(q.type==="kick"){
+    setBan();lock("Đã bị đuổi khỏi trang","Hoàng Sa và Trường Sa là của Việt Nam!");
+    setTimeout(function(){try{window.close()}catch(e){}location.replace("about:blank")},2500);return}
+  wrong++;b.classList.add("bad");
+  if(wrong>MAXWRONG){lock("Thất bại","Bạn đã chọn sai quá "+MAXWRONG+" lần. Hãy ôn lại lịch sử rồi thử lại nhé!",true);return}
+  document.getElementById("msg").textContent="Sai rồi! Bạn còn "+(MAXWRONG-wrong+1)+" lần được sai (đã sai "+wrong+"/"+MAXWRONG+"). Thử lại nhé.";
+}
+function win(){
+  var c=atob("SG9hbmdTYVRydW9uZ1NhbGFjdWFWaWV0TmFt");
+  app.innerHTML='<div class="lock"><div class="big">🎉</div><h1>Chúc mừng! Bạn đã vượt qua 5 câu hỏi</h1></div><div class="code"><b id="cd">Mã kích hoạt : '+c+'</b><button class="copy" id="cp">Copy mã</button></div>';
+  document.getElementById("cp").onclick=function(){
+    var btn=this;
+    function done(){btn.textContent="Đã copy ✓"}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(c).then(done,fb)}else fb();
+    function fb(){var t=document.createElement("textarea");t.value=c;document.body.appendChild(t);t.select();try{document.execCommand("copy");done()}catch(e){}document.body.removeChild(t)}
+  };
+}
+/* Chặn cơ bản: chuột phải, F12, Ctrl+Shift+I/J/C, Ctrl+U */
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("keydown",function(e){
+  var k=(e.key||"").toLowerCase();
+  if(e.key==="F12"||(e.ctrlKey&&e.shiftKey&&"ijc".indexOf(k)>-1)||(e.ctrlKey&&k==="u")||(e.metaKey&&e.altKey&&"iju".indexOf(k)>-1)){e.preventDefault();e.stopPropagation();return false}
+},true);
+show();
+})();
+</script>
+</body>
+</html>
