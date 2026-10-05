@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Thử thách yêu nước</title>
+<title>Trắc nghiệm Địa lý Việt Nam</title>
 <style>
 :root{--bg:#fff8e1;--card:#fff;--tx:#3b1a1a;--red:#da251d;--gold:#ffcd00;--ok:#1b8a3a;--bad:#c62828;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a0d0d;--card:#3a1515;--tx:#fff3d6}}
@@ -32,13 +32,18 @@ button.opt.bad{background:var(--bad);color:#fff;border-color:var(--bad)}
 <script>
 (function(){
 var Q=[
-{t:"Bạn có yêu Việt Nam không?",o:["Có","Không"],a:0,type:"ban"},
-{t:"Hoàng Sa và Trường Sa là của Việt Nam đúng không?",o:["Đúng","Không"],a:0,type:"kick"},
-{t:"Tác phẩm nổi tiếng nào của Chủ tịch Hồ Chí Minh khẳng định \"Dân ta có một lòng nồng nàn yêu nước. Đó là một truyền thống quý báu của ta\"?",o:["A. Tuyên ngôn Độc lập","B. Tinh thần yêu nước của nhân dân ta","C. Đường Kách mệnh"],a:1,type:"quiz"},
-{t:"Nguyễn Tất Thành (Bác Hồ) ra đi tìm đường cứu nước vào năm nào và tại bến cảng nào?",o:["A. Năm 1911, tại bến cảng Nhà Rồng","B. Năm 1920, tại cảng Mác-xây (Pháp)","C. Năm 1930, tại Quảng Châu (Trung Quốc)"],a:0,type:"quiz"},
-{t:"Đội Việt Nam Tuyên truyền Giải phóng quân (tiền thân của Quân đội nhân dân Việt Nam) được thành lập vào ngày tháng năm nào?",o:["A. 03/02/1930","B. 22/12/1944","C. 19/08/1945"],a:1,type:"quiz"}
+ {t:"Tỉnh nào ở nước ta có ba mặt giáp biển (Đông, Tây, Nam)?",o:["A. Kiên Giang","B. Cà Mau","C. Khánh Hòa","D. Quảng Ninh"],a:1,type:"quiz"},
+ {t:"Ngọn núi nào được mệnh danh là \"nóc nhà Đông Dương\" với độ cao 3.143m?",o:["A. Núi Tây Côn Linh","B. Núi Lảo Thẩn","C. Đỉnh Fansipan (Lào Cai)","D. Núi Chi Lăng"],a:2,type:"quiz"},
+ {t:"Địa phương nào ở nước ta có lượng mưa trung bình năm thấp nhất cả nước (nơi khô hạn nhất)?",o:["A. Bình Thuận","B. Ninh Thuận","C. Khánh Hòa","D. Ninh Bình"],a:1,type:"quiz"},
+ {t:"Tỉnh nào ở vùng Tây Bắc có mật độ dân số thấp nhất cả nước tính theo thống kê địa lý hành chính?",o:["A. Lai Châu","B. Điện Biên","C. Sơn La","D. Cao Bằng"],a:0,type:"quiz"},
+ {t:"Điểm cực Nam trên phần đất liền của nước ta thuộc vĩ độ bao nhiêu?",o:["A. 8°34'B","B. 23°23'B","C. 102°09'Đ","D. 109°24'Đ"],a:0,type:"quiz"},
+ {t:"Địa hình đồi núi thấp và đồng bằng chiếm khoảng bao nhiêu phần trăm diện tích lãnh thổ nước ta?",o:["A. 50%","B. 70%","C. 85%","D. 95%"],a:2,type:"quiz"},
+ {t:"Hướng nghiêng chung của địa hình phần đất liền nước ta là gì?",o:["A. Đông - Tây","B. Nam - Bắc","C. Tây Bắc - Đông Nam","D. Đông Bắc - Tây Nam"],a:2,type:"quiz"},
+ {t:"Tỉnh nào ở vùng Đồng bằng sông Hồng có mật độ dân số cao nhất cả nước?",o:["A. Thái Bình","B. Nam Định","C. Bắc Ninh","D. Hải Dương"],a:2,type:"quiz"},
+ {t:"Đảo nào có diện tích lớn nhất của nước ta hiện nay?",o:["A. Đảo Cát Bà","B. Đảo Phú Quốc","C. Đảo Lý Sơn","D. Đảo Côn Sơn"],a:1,type:"quiz"},
+ {t:"Hai hướng chính của địa hình Việt Nam là hướng Tây Bắc - Đông Nam và hướng nào?",o:["A. Hướng vòng cung","B. Hướng Bắc - Nam","C. Hướng Đông - Tây","D. Hướng kinh tuyến"],a:0,type:"quiz"}
 ];
-var MAXWRONG=1, wrong=0, cur=0, app=document.getElementById("app"), KEY="ban_vn_quiz";
+var MAXWRONG=1, wrong=0, cur=0, app=document.getElementById("app"), KEY="geo_vn_quiz";
 function banned(){try{return localStorage.getItem(KEY)==="1"}catch(e){return false}}
 function setBan(){try{localStorage.setItem(KEY,"1")}catch(e){}}
 function lock(title,text,retry){
@@ -48,7 +53,7 @@ function lock(title,text,retry){
 function show(){
   if(banned()){lock("Không thể truy cập","Trang web này không dành cho bạn.");return}
   var q=Q[cur];
-  var h='<h1>🇻🇳 Thử thách yêu nước</h1><div class="meta"><span>Câu '+(cur+1)+'/5</span><span>'+(cur>=2?'Sai: '+wrong+'/'+MAXWRONG:'')+'</span></div><div class="bar"><i style="width:'+(cur/5*100)+'%"></i></div><div class="q">'+q.t+'</div>';
+  var h='<h1>🗺️ Trắc nghiệm Địa lý Việt Nam</h1><div class="meta"><span>Câu '+(cur+1)+'/10</span><span>'+(cur>=2?'Sai: '+wrong+'/'+MAXWRONG:'')+'</span></div><div class="bar"><i style="width:'+(cur/10*100)+'%"></i></div><div class="q">'+q.t+'</div>';
   q.o.forEach(function(x,i){h+='<button class="opt" data-i="'+i+'">'+x+'</button>'});
   h+='<div class="msg" id="msg"></div>';
   app.innerHTML=h;
@@ -57,17 +62,13 @@ function show(){
 function pick(i,b){
   var q=Q[cur];
   if(i===q.a){cur++;cur>=Q.length?win():show();return}
-  if(q.type==="ban"){setBan();lock("Không thể truy cập","Bạn không yêu Việt Nam nên không thể sử dụng trang web này.");return}
-  if(q.type==="kick"){
-    setBan();lock("Đã bị đuổi khỏi trang","Hoàng Sa và Trường Sa là của Việt Nam!");
-    setTimeout(function(){try{window.close()}catch(e){}location.replace("about:blank")},2500);return}
   wrong++;b.classList.add("bad");
-  if(wrong>MAXWRONG){lock("Thất bại","Bạn đã chọn sai quá "+MAXWRONG+" lần. Hãy ôn lại lịch sử rồi thử lại nhé!",true);return}
+  if(wrong>MAXWRONG){lock("Thất bại","Bạn đã chọn sai quá "+MAXWRONG+" lần. Hãy ôn lại kiến thức Địa lý Việt Nam rồi thử lại nhé!",true);return}
   document.getElementById("msg").textContent="Sai rồi! Bạn còn "+(MAXWRONG-wrong+1)+" lần được sai (đã sai "+wrong+"/"+MAXWRONG+"). Thử lại nhé.";
 }
 function win(){
   var c=atob("SG9hbmdTYVRydW9uZ1NhbGFjdWFWaWV0TmFt");
-  app.innerHTML='<div class="lock"><div class="big">🎉</div><h1>Chúc mừng! Bạn đã vượt qua 5 câu hỏi</h1></div><div class="code"><b id="cd">Mã kích hoạt : '+c+'</b><button class="copy" id="cp">Copy mã</button></div>';
+  app.innerHTML='<div class="lock"><div class="big">🎉</div><h1>Chúc mừng! Bạn đã vượt qua 10 câu hỏi</h1></div><div class="code"><b id="cd">Mã kích hoạt : '+c+'</b><button class="copy" id="cp">Copy mã</button></div>';
   document.getElementById("cp").onclick=function(){
     var btn=this;
     function done(){btn.textContent="Đã copy ✓"}
